@@ -1,0 +1,6 @@
+@najnovijipokusajREST_HostAddress = http://127.0.0.1:5233
+
+GET {{najnovijipokusajREST_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

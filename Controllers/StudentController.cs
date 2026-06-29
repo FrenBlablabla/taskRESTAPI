@@ -66,5 +66,47 @@ namespace najnovijipokusajREST.Controllers
                 return StatusCode(500, $"Database error: {ex.Message}");
             }
         }
+        [HttpGet("courses/{jmbag}")]
+        public async Task<IActionResult> GetEnrolledCourses(string jmbag)
+        {
+            var courses = await _context.UpisaniPredmeti
+                                         .Where(up => up.StudentJmbag == jmbag)
+                                         .ToListAsync();
+            return Ok(courses);
+        }
+
+        [HttpGet("exams/{upisPredmetaId}")]
+        public async Task<IActionResult> GetExamRegistrations(int upisPredmetaId)
+        {
+            var exams = await _context.PrijaveIspita
+                                      .Where(pi => pi.UpisPredmetaId == upisPredmetaId)
+                                      .ToListAsync();
+            return Ok(exams);
+        }
+        [HttpGet("deadlines")]
+        public async Task<IActionResult> GetAvailableDeadlines()
+        {
+            var sampleDeadlines = new List<int> { 101, 102, 103, 104 };
+            return Ok(sampleDeadlines);
+        }
+
+        [HttpPost("register-exam")]
+        public async Task<IActionResult> RegisterExam([FromBody] PrijavaIspita novaPrijava)
+        {
+            if (novaPrijava == null) return BadRequest("Invalid data.");
+
+            int currentAttempts = await _context.PrijaveIspita
+                .Where(p => p.UpisPredmetaId == novaPrijava.UpisPredmetaId)
+                .CountAsync();
+
+            novaPrijava.RedniBrojIzlaska = currentAttempts + 1;
+            novaPrijava.DatumPrijave = DateTime.Now;
+            novaPrijava.Status = "Prijavljen";
+
+            _context.PrijaveIspita.Add(novaPrijava);
+            await _context.SaveChangesAsync();
+
+            return Ok("Successfully registered for the exam.");
+        }
     }
 }

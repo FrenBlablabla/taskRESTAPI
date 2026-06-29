@@ -10,6 +10,7 @@ namespace najnovijipokusajREST.Data
         }
 
         public DbSet<Student> Students { get; set; } = null!;
-
+        public DbSet<UpisPredmeta> UpisaniPredmeti { get; set; } = null!;
+        public DbSet<PrijavaIspita> PrijaveIspita { get; set; } = null!;
     }
 }
